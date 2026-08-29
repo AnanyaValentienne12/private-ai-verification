@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": ["ES2022"],
+    "outDir": "dist",
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": false,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": [
+    "api/**/*.ts",
+    "ai/**/*.ts",
+    "schemas/**/*.ts",
+    "types/**/*.ts",
+    "utils/**/*.ts",
+    "config/**/*.ts",
+    "server.ts"
+  ],
+  "exclude": ["node_modules", "dist", "tests"]
+}
