@@ -41,59 +41,228 @@ function App() {
   }
   if (screen === 'verify') {
     return (
-      <div className="app-container">
-        <div className="card">
-          <h1>Verification Requirements</h1>
+      <div className="verify-page">
+        <div className="particle particle-one"></div>
+        <div className="particle particle-two"></div>
+        <div className="particle particle-three"></div>
+        <div className="particle particle-four"></div>
+<div className="particle particle-five"></div>
+<div className="particle particle-six"></div>
+<div className="particle particle-seven"></div>
+<div className="particle particle-eight"></div>
   
-          <p>The verifier requested:</p>
-          <p>{requirement}</p>
-  
-          <h2>Conditions</h2>
-  
-          <div className="condition-box">
-            ✓ Age ≥ {conditions.age}
+        <nav className="top-nav">
+          <div className="brand">
+            <div className="brand-icon">V</div>
+            <span>VEILAI</span>
           </div>
   
-          <div className="condition-box">
-            ✓ Monthly income ≥ ${conditions.income.toLocaleString()}
+          <div className="nav-status">
+            <span className="status-dot"></span>
+            AI Interpretation
+          </div>
+        </nav>
+  
+        <div className="verify-content">
+  
+          <div className="hero-badge">
+            ✦ REQUIREMENT INTERPRETED
+          </div>
+  
+          <div className="interpretation-flow">
+  
+            <div className="request-summary">
+              <p className="eyebrow">YOUR REQUEST</p>
+  
+              <h2>
+                “{requirement|| 'Applicant must be 21+ and earn at least $4,000 per month.'}”
+              </h2>
+  
+              <p className="request-note">
+                Natural language requirement
+              </p>
+            </div>
+  
+            <div className="ai-transform">
+              <div className="ai-circle">✦</div>
+              <span>AI</span>
+              <div className="transform-arrow">→</div>
+            </div>
+  
+            <div className="policy-summary">
+              <p className="eyebrow">PRIVATE POLICY</p>
+  
+              <div className="policy-row">
+                <span>Age</span>
+                <strong>≥ {conditions.age}</strong>
+              </div>
+  
+              <div className="policy-row">
+                <span>Monthly income</span>
+                <strong>
+                  ≥ ${conditions.income.toLocaleString()}
+                </strong>
+              </div>
+  
+              <p className="policy-status">
+                ✓ 2 conditions extracted
+              </p>
+            </div>
+  
+          </div>
+  
+          <div className="private-ready-card">
+  
+            <div className="private-ready-heading">
+              <div>
+                <p className="eyebrow">PRIVATE VERIFICATION READY</p>
+                <h2>Your applicant data stays hidden.</h2>
+              </div>
+  
+              <div className="lock-badge">
+                🔒 Protected
+              </div>
+            </div>
+  
+            <div className="hidden-values">
+  
+              <div className="hidden-row">
+                <span>Actual age</span>
+                <strong>🔒 Hidden</strong>
+              </div>
+  
+              <div className="hidden-row">
+                <span>Actual income</span>
+                <strong>🔒 Hidden</strong>
+              </div>
+  
+            </div>
+  
+            <div className="proof-status">
+              <span className="proof-dot"></span>
+              Private proof ready with Midnight
+            </div>
+  
           </div>
   
           <button
+            className="primary-button verify-button"
             onClick={() => {
               setResult(true)
               setScreen('result')
             }}
           >
-            Verify Privately
+            <span>Verify with Midnight</span>
+            <span>→</span>
           </button>
+  
+          <div className="privacy-note">
+            <span>◉</span>
+            Only the verification result will be revealed.
+          </div>
+  
         </div>
+  
       </div>
     )
   }
   return (
-    <div className="app-container">
-      <div className="card">
-        <h1>Private AI Verification</h1>
+    <div className="landing-page">
   
-        <p className="subtitle">
-          Verify what matters without revealing your private information.
+      <nav className="top-nav">
+        <div className="brand">
+          <div className="brand-icon">V</div>
+          <span>VEILAI</span>
+        </div>
+  
+        <div className="nav-status">
+          <span className="status-dot"></span>
+          Private Verification
+        </div>
+      </nav>
+  
+      <div className="hero-section">
+  
+        <div className="hero-badge">
+          ✦ AI + ZERO-KNOWLEDGE PRIVACY
+        </div>
+  
+        <h1 className="hero-title">
+          Verify what matters.
+          <span> Reveal nothing else.</span>
+        </h1>
+  
+        <p className="hero-description">
+          Turn simple requirements into private verification checks
+          without exposing sensitive applicant data.
         </p>
   
-        <h2>Create a verification request</h2>
+        <div className="verification-card">
   
-        <p>What should the applicant prove?</p>
+          <div className="card-heading">
+            <div>
+              <p className="eyebrow">CREATE VERIFICATION</p>
+              <h2>What should the applicant prove?</h2>
+            </div>
   
-        <textarea
-          placeholder="Example: Applicant must be 21+ and earn at least $4,000 per month."
-          value={requirement}
-          onChange={(event) => setRequirement(event.target.value)}
-        />
+            <div className="secure-badge">
+              🔒 Private
+            </div>
+          </div>
   
-        <button onClick={() => setScreen('verify')}>
-          Create Verification
-        </button>
+          <textarea
+            className="requirement-input"
+            placeholder="Example: Applicant must be 21+ and earn at least $4,000 per month."
+            value={requirement}
+            onChange={(event) => setRequirement(event.target.value)}
+          />
+  
+          <button
+            className="primary-button"
+            onClick={() => setScreen('verify')}
+          >
+            <span>Create Verification</span>
+            <span>→</span>
+          </button>
+  
+          <div className="privacy-note">
+            <span>◉</span>
+            Sensitive values stay private during verification.
+          </div>
+  
+        </div>
+  
+        <div className="process-flow">
+  
+          <div className="process-step">
+            <span>01</span>
+            AI interprets
+          </div>
+  
+          <div className="process-arrow">→</div>
+  
+          <div className="process-step">
+            <span>02</span>
+            Midnight verifies privately
+          </div>
+  
+          <div className="process-arrow">→</div>
+  
+          <div className="process-step">
+            <span>03</span>
+            Only the result is revealed
+          </div>
+  
+        </div>
+  
       </div>
+  
+      <div className="glow glow-one"></div>
+      <div className="glow glow-two"></div>
+  
     </div>
   )
-}
-export default App
+  
+  }
+  
+  export default App
