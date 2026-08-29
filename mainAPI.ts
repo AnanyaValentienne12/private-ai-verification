@@ -1,6 +1,6 @@
-import { Contract } from './managed/eligibility/contract/index.js';
-import { credentialWitnesses, UserPrivateData } from './witness.js';
-import { createWasmProofProvider } from '@midnight-ntwrk/proof-provider-wasm';
+import { Contract } from './managed/eligibility/contract';
+import { credentialWitnesses, UserPrivateData } from './witness';
+import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 
 export async function executeVerification(
   userId: Uint8Array,
@@ -14,11 +14,11 @@ export async function executeVerification(
   };
 
   // initialize the WASM proof engine directly in the browser runtime
-  const wasmProofProvider = await createWasmProofProvider();
+const proofProvider = httpClientProofProvider('http://127.0.0.1:6300');
 
   //Configure providers to use local WASM + network endpoints
   const providers = {
-    proofProvider: wasmProofProvider, // WASM engine handles ZK proofs locally
+    proofProvider: proofProvider, // WASM engine handles ZK proofs locally
     indexer: 'https://indexer.devnet.midnight.network',
     node: 'https://rpc.devnet.midnight.network',
   };
