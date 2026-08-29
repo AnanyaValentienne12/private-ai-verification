@@ -4,8 +4,8 @@ import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client
 
 export async function executeVerification(
   userId: Uint8Array,
-  publicCriteria: { minAge: number; minIncome: number }, //employer's conditions from Ai can be handled here
-  privateApplicantData: { age: number; income: number }   //applicant data can be handled through here
+  publicCriteria: { minAge: number; minIncome: number }, 
+  privateApplicantData: { age: number; income: number } 
 ): Promise<{ verified: boolean; tx?: any; error?: string }> 
 {
   const initialPrivateState: UserPrivateData = {
@@ -14,7 +14,10 @@ export async function executeVerification(
   };
 
   // initialize the WASM proof engine directly in the browser runtime
-const proofProvider = httpClientProofProvider('http://127.0.0.1:6300');
+  const proofProvider = httpClientProofProvider(
+    'http://127.0.0.1:6300',
+    'http://127.0.0.1:6300' as any
+  );
 
   //Configure providers to use local WASM + network endpoints
   const providers = {
