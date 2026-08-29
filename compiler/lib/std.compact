@@ -1,0 +1,240 @@
+module Std {
+  export ledger kernel: Kernel;
+
+  // Generic Data
+  export struct Maybe<a> {
+    is_some: Boolean;
+    value: a;
+  }
+  export circuit some<a>(value: a): Maybe<a> {
+    return new Maybe<a>(true, value);
+  }
+  export circuit none<a>(): Maybe<a> {
+    return new Maybe<a>(false, default<a>);
+  }
+  export struct Either<a, b> {
+    is_left: Boolean;
+    left: a;
+    right: b;
+  }
+  export circuit left<a, b>(value: a): Either<a, b> {
+    return new Either<a, b>(true, value, default<b>);
+  }
+  export circuit right<a, b>(value: b): Either<a, b> {
+    return new Either<a, b>(false, default<a>, value);
+  }
+
+  // Hashing
+  export circuit transient_hash<a>(value: a): Field;
+  export circuit transient_commit<a>(value: a, rand: Field): Field;
+  export circuit persistent_hash<a>(value: a): Bytes<32>;
+  export circuit persistent_commit<a>(value: a, rand: Bytes<32>): Bytes<32>;
+  export circuit degrade_to_transient(x: Bytes<32>) : Field;
+  export circuit upgrade_from_transient(x: Field): Bytes<32>;
+
+  // Elliptic Curves
+  export struct CurvePoint {
+    x: Field;
+    y: Field;
+  }
+  export circuit ec_add(a: CurvePoint, b: CurvePoint): CurvePoint;
+  export circuit ec_mul(a: CurvePoint, b: Field): CurvePoint;
+  export circuit ec_mul_generator(b: Field): CurvePoint;
+  export circuit hash_to_curve<a>(value: a): CurvePoint;
+
+  // Merkle trees
+  export struct MerkleTreeDigest { field: Field; }
+  export struct MerkleTreePathEntry {
+    sibling: MerkleTreeDigest;
+    goes_left: Boolean;
+  }
+  export struct MerkleTreePath<#n, a> {
+    leaf: a;
+    path: Vector<n, MerkleTreePathEntry>;
+  }
+  struct LeafPreimage<a> {
+    domain_sep: Bytes<6>,
+    data: a,
+  }
+  export circuit merkle_tree_path_root<#n, a>(path: MerkleTreePath<n, a>): MerkleTreeDigest {
+    return new MerkleTreeDigest(
+      fold(merkle_tree_path_entry_root,
+           degrade_to_transient(persistent_hash<LeafPreimage<a>>(new LeafPreimage<a>("mdn:lh", path.leaf))),
+           path.path));
+  }
+  export circuit merkle_tree_path_root_no_leaf_hash<#n>(path: MerkleTreePath<n, Bytes<32>>): MerkleTreeDigest {
+    return new MerkleTreeDigest(
+      fold(merkle_tree_path_entry_root,
+           degrade_to_transient(path.leaf),
+           path.path));
+  }
+  circuit merkle_tree_path_entry_root(
+    recursive_digest: Field,
+    entry: MerkleTreePathEntry
+  ): Field {
+    const left = entry.goes_left ? recursive_digest : entry.sibling.field;
+    const right = entry.goes_left ? entry.sibling.field : recursive_digest;
+    return transient_hash<Vector<2, Field>>([left, right]);
+  }
+
+
+  // Midnight kernel types
+  export struct ContractAddress { bytes: Bytes<32>; }
+  export struct CoinInfo {
+    nonce: Bytes<32>;
+    color: Bytes<32>;
+    value: Uint<128>;
+  }
+  export struct QualifiedCoinInfo {
+    nonce: Bytes<32>;
+    color: Bytes<32>;
+    value: Uint<128>;
+    mt_index: Uint<64>;
+  }
+  export struct ZswapCoinPublicKey { bytes: Bytes<32>; }
+  export struct SendResult {
+    change: Maybe<CoinInfo>;
+    sent: CoinInfo;
+  }
+
+  export circuit native_token(): Bytes<32> {
+    return pad(32, "");
+  }
+
+  // TS: Get from wallet
+  export circuit own_public_key(): ZswapCoinPublicKey;
+  export circuit create_zswap_input(coin: QualifiedCoinInfo): Void;
+  export circuit create_zswap_output(coin: CoinInfo, recipient: Either<ZswapCoinPublicKey, ContractAddress>): Void;
+
+  // Midnight helper circuits
+  export circuit token_type(domain_sep: Bytes<32>, contract_address: ContractAddress): Bytes<32> {
+    return persistent_commit<Vector<2, Bytes<32>>>([domain_sep, contract_address.bytes], pad(32, "midnight:derive_token"));
+  }
+  export circuit mint_token(
+    domain_sep: Bytes<32>,
+    value: Uint<128>,
+    nonce: Bytes<32>,
+    recipient: Either<ZswapCoinPublicKey, ContractAddress>
+  ): CoinInfo {
+    const coin = new CoinInfo(nonce, token_type(domain_sep, kernel.self()), value);
+    kernel.mint(domain_sep, value);
+    create_zswap_output(coin, recipient);
+    const cm = coin_commitment(coin, recipient);
+    kernel.claim_zswap_coin_spend(cm);
+    return coin;
+  }
+  export circuit evolve_nonce(index: Uint<128>, nonce: Bytes<32>): Bytes<32> {
+    return upgrade_from_transient(transient_hash<Vector<3, Field>>([
+      "midnight:kernel:nonce_evolve" as Field,
+      index as Field,
+      degrade_to_transient(nonce),
+    ]));
+  }
+  export circuit burn_address(): Either<ZswapCoinPublicKey, ContractAddress> {
+    return left<ZswapCoinPublicKey, ContractAddress>(default<ZswapCoinPublicKey>);
+  }
+  export circuit receive(coin: CoinInfo): Void {
+    const recipient = right<ZswapCoinPublicKey, ContractAddress>(kernel.self());
+    create_zswap_output(coin, recipient);
+    kernel.claim_zswap_coin_receive(coin_commitment(coin, recipient));
+  }
+  export circuit send(
+    input: QualifiedCoinInfo,
+    recipient: Either<ZswapCoinPublicKey, ContractAddress>,
+    value: Uint<128>
+  ): SendResult {
+    const self_addr = kernel.self();
+    create_zswap_input(input);
+    kernel.claim_zswap_nullifier(
+      coin_nullifier(downcast_qualified_coin(input), self_addr));
+    const change = input.value - value;
+    const output = new CoinInfo(
+      upgrade_from_transient(transient_hash<Vector<2, Field>>(["midnight:kernel:nonce_evolve" as Field, degrade_to_transient(input.nonce)])),
+      input.color,
+      value);
+    create_zswap_output(output, recipient);
+    kernel.claim_zswap_coin_spend(coin_commitment(output, recipient));
+    if(change == 0) {
+      return new SendResult(none<CoinInfo>(), output);
+    } else {
+      const change_coin = new CoinInfo(
+        upgrade_from_transient(transient_hash<Vector<2, Field>>(["midnight:kernel:nonce_evolve/2" as Field, degrade_to_transient(input.nonce)])),
+        input.color,
+        change);
+      create_zswap_output(change_coin, right<ZswapCoinPublicKey, ContractAddress>(self_addr));
+      const cm = coin_commitment(change_coin, right<ZswapCoinPublicKey, ContractAddress>(self_addr));
+      kernel.claim_zswap_coin_spend(cm);
+      kernel.claim_zswap_coin_receive(cm);
+      return new SendResult(some<CoinInfo>(change_coin), output);
+    }
+  }
+  export circuit send_immediate(
+    input: CoinInfo,
+    target: Either<ZswapCoinPublicKey, ContractAddress>,
+    value: Uint<128>
+  ): SendResult {
+    return send(upcast_qualified_coin(input), target, value);
+  }
+  export circuit merge_coin(
+    a: QualifiedCoinInfo,
+    b: QualifiedCoinInfo
+  ): CoinInfo {
+    const self_addr = kernel.self();
+    create_zswap_input(a);
+    kernel.claim_zswap_nullifier(coin_nullifier(downcast_qualified_coin(a), self_addr));
+    create_zswap_input(b);
+    kernel.claim_zswap_nullifier(coin_nullifier(downcast_qualified_coin(b), self_addr));
+    assert (a.color == b.color) "Can only merge coins of the same color";
+    const new_coin = new CoinInfo(
+      upgrade_from_transient(transient_hash<Vector<2, Field>>(["midnight:kernel:nonce_evolve" as Field, degrade_to_transient(a.nonce)])),
+      a.color,
+      (a.value + b.value) as Uint<128>);
+    create_zswap_output(new_coin, right<ZswapCoinPublicKey, ContractAddress>(self_addr));
+    const cm = coin_commitment(new_coin, right<ZswapCoinPublicKey, ContractAddress>(self_addr));
+    kernel.claim_zswap_coin_spend(cm);
+    kernel.claim_zswap_coin_receive(cm);
+    return new_coin;
+  }
+  export circuit merge_coin_immediate(
+    a: QualifiedCoinInfo,
+    b: CoinInfo
+  ): CoinInfo {
+    return merge_coin(a, upcast_qualified_coin(b));
+  }
+  circuit downcast_qualified_coin(coin: QualifiedCoinInfo): CoinInfo {
+    return new CoinInfo(coin.nonce, coin.color, coin.value);
+  }
+  circuit upcast_qualified_coin(coin: CoinInfo): QualifiedCoinInfo {
+    return new QualifiedCoinInfo(coin.nonce, coin.color, coin.value, 0);
+  }
+  struct CoinPreimage {
+    info: CoinInfo,
+    data_type: Boolean,
+    data: Bytes<32>,
+    domain_sep: Bytes<6>,
+  }
+  circuit coin_commitment(
+    coin: CoinInfo,
+    recipient: Either<ZswapCoinPublicKey, ContractAddress>
+  ): Bytes<32> {
+    return persistent_hash<CoinPreimage>(
+      new CoinPreimage(
+        coin,
+        recipient.is_left,
+        recipient.is_left ? recipient.left.bytes : recipient.right.bytes,
+        "mdn:cc"));
+  }
+  circuit coin_nullifier(
+    coin: CoinInfo,
+    addr: ContractAddress
+  ): Bytes<32> {
+    return persistent_hash<CoinPreimage>(
+      new CoinPreimage(
+        coin,
+        false, // The hypothetical is_left of Either<ZSwapCoinSecretKey, ContractAddress>
+        addr.bytes,
+        "mdn:cn"));
+  }
+}
+
+import Std;

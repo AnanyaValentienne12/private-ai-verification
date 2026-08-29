@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "file": "index.cjs",
+  "sourceRoot": "../../../",
+  "sources": ["enligibilityChecker.compact"],
+  "names": [],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;EAEA;;;;;;;;;;;;MAKA,AAAA,iBAgBC;;;;cAfC,MAAiB;cACjB,MAAgB;cAChB,SAAmB;;;;;;;;;;;;;;;;;;;;;;;;;;;;yCAFnB,MAAiB,+BACjB,MAAgB,+BAChB,SAAmB;;;;;;;;;kDAFnB,MAAiB;kDACjB,MAAgB;kDAChB,SAAmB;;;OAapB;;;;;GAAA;EArBD;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;IAAA;;;;;;;;;;;sBAAuD;;;;;;;GAqBtD;EAnBD,AAAA,mBAAoC;;sDAApC,eAAoC;;;;;;;;;;;;;GAAA;EACpC,AAAA,sBAAuC;;sDAAvC,kBAAuC;;;;;;;;;;;;;GAAA;EAEvC,AAAA,qBAgBC,4BAfC,MAAiB,EACjB,MAAgB,EAChB,SAAmB;UAGnB,GAA8B;UAC9B,MAAoC;8BAG7B,GAAG,GAAI,MAAM;8BACb,MAAM,GAAI,SAAS;IAE1B;;;;;;;;;;;yGAAuB,MAAM;;;;;;;sBAAd;GAGhB;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;IArBD;;;;uCAAA;;;;;;;;;;;;;;;;;;yDAAuD;;;;;uCAAvD;;;;;;;;;;;;;;yDAAuD;;;;;;;;;;;;uCAAvD;;;;;;;;;;;;;;;;;yDAAuD;;;;;;;;;;;;uCAAvD;;;;;;;;;;;;;;;;;;;;yDAAuD;;;;;;;;KAAA;;;;;;;;;;;;;;;;;"
+}

@@ -1,0 +1,24 @@
+//import CompactStandardLibrary;
+
+export ledger qualifiedStatus: Map<Bytes<32>, Boolean>;
+
+witness fetchPrivateAge(): Uint<32>;
+witness fetchPrivateIncome(): Uint<32>;
+
+export circuit verifyEligibility(
+  userId: Bytes<32>, //i leave userID here for now
+  minAge: Uint<32>, 
+  minIncome: Uint<32>
+): Void {
+  // Get the variables through witness
+  const age = fetchPrivateAge();
+  const income = fetchPrivateIncome();
+
+  //ZK Constraints. If these fail, the local Proof Server stops and no proof is made.
+  assert age >= minAge "Not Qualified due to Age";
+  assert income >= minIncome "Not Qualified due to Income";
+
+  qualifiedStatus.insert(userId, true);//true here, is for Qualified
+  //there is no need for else condition, because once the condition fails, the execution aborts
+  //before a truth can even be generated, thus it will be 0
+}
