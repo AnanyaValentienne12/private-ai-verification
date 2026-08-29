@@ -10,19 +10,27 @@ An AI-powered zero-knowledge verification engine, powered by midnight that valid
 
 ## Set Up Instructions (within your IDE Terminal)
 
-1. **Install Global Midnight Tooling:**
-   Install the Compact compiler globally via npm:
-   ```bash
-   npm install -g @midnight-ntwrk/compactc
-   npm install @midnight-ntwrk/midnight-js-http-client-proof-provider
-   npm install @midnight-ntwrk/compact-runtime
-
-2. **Clone the Repository & Install Dependencies**
+1. **Clone the Repository & Install Dependencies**
     ```bash
     git clone [https://github.com/your-org/private-ai-verification.git](https://github.com/your-org/private-ai-verification.git)
     cd private-ai-verification
     npm install
    ```
-3. **Compile Compact ZK Circuit**
+2. **Follow the link below and download Release Windows Linux 0.19.0**
+   https://docs.midnight.network/relnotes/compact
+   Move the file to the cloned repository
+   Enter Linux and unzip:
+   ```bash
+   wsl
+   cd {YOUR_DIRECTORY}
+   unzip /mnt/{YOUR_DIRECTORY}/compactc-linux.zip -d ./compiler
+   
+3. **Install Global Midnight Tooling:**
+   Install the Compact compiler globally via npm:
+   ```bash
+   npm install @midnight-ntwrk/midnight-js-http-client-proof-provider
+   npm install @midnight-ntwrk/compact-runtime
+
+4. **Compile Compact ZK Circuit**
    ```bash
    compact compile eligibilityChecker.compact managed/eligibility
