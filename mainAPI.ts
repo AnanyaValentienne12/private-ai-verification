@@ -1,6 +1,7 @@
-import { Contract } from './managed/eligibility/contract';
+import { Contract } from './managed/eligibility/contract/index.cjs';
 import { credentialWitnesses, UserPrivateData } from './witness';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
+import { deployContract } from '@midnight-ntwrk/midnight-js-contracts';
 
 export async function executeVerification(
   userId: Uint8Array,
@@ -18,22 +19,24 @@ export async function executeVerification(
     'http://127.0.0.1:6300',
     'http://127.0.0.1:6300' as any
   );
+  
 
   //Configure providers to use local WASM + network endpoints
   const providers = {
-    proofProvider: proofProvider, // WASM engine handles ZK proofs locally
-    indexer: 'https://indexer.devnet.midnight.network',
-    node: 'https://rpc.devnet.midnight.network',
-  };
+    proofProvider: proofProvider,
+    publicDataProvider: {
+      indexer: 'https://indexer.devnet.midnight.network',
+      node: 'https://rpc.devnet.midnight.network',
+    },
+  } as any;
 
-  const contractInstance = await Contract.deployOrJoin({
-    witnesses: credentialWitnesses,
-    initialPrivateState: initialPrivateState,
-    providers: providers,
-  });
+  const contractInstance = await deployContract(providers, {
+      contractInstance: new Contract(credentialWitnesses),
+      initialPrivateState: initialPrivateState,
+  } as any);
 
-  try {
-    const tx = await contractInstance.circuits.verifyEligibility(
+try {
+    const tx = await contractInstance.callTx.verifyEligibility(
       userId,
       BigInt(publicCriteria.minAge), // Enter Employer's criteria HERE!!!
       BigInt(publicCriteria.minIncome) // Enter Employer's criteria HERE!!!

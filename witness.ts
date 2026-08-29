@@ -1,15 +1,16 @@
 import { WitnessContext } from '@midnight-ntwrk/compact-runtime';
+import { Ledger } from './managed/eligibility/contract/index.cjs';
 
-export type UserPrivateData = {
+export interface UserPrivateData {
   age: bigint;
   income: bigint;
-};
+}
 
 export const credentialWitnesses = {
-  fetchPrivateUserData: (context: WitnessContext<UserPrivateData>) => {
-    return {
-      age: context.privateState.age,
-      income: context.privateState.income,
-    };
+  fetchPrivateAge: (context: WitnessContext<Ledger, UserPrivateData>): [UserPrivateData, bigint] => {
+    return [context.privateState, context.privateState.age];
+  },
+  fetchPrivateIncome: (context: WitnessContext<Ledger, UserPrivateData>): [UserPrivateData, bigint] => {
+    return [context.privateState, context.privateState.income];
   },
 };

@@ -1,4 +1,4 @@
-import CompactStandardLibrary;
+//import CompactStandardLibrary;
 
 export ledger qualifiedStatus: Map<Bytes<32>, Boolean>;
 
@@ -9,7 +9,7 @@ export circuit verifyEligibility(
   userId: Bytes<32>, //i leave userID here for now
   minAge: Uint<32>, 
   minIncome: Uint<32>
-): [] {
+): Void {
   // Get the variables through witness
   const age = fetchPrivateAge();
   const income = fetchPrivateIncome();

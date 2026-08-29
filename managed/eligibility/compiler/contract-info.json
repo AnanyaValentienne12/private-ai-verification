@@ -1,0 +1,34 @@
+{
+  "circuits": [
+    {
+      "name": "verifyEligibility",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "userId",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "minAge",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
+        },
+        {
+          "name": "minIncome",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Void"
+      }
+    }
+  ]
+}
