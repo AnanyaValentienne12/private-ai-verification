@@ -5,37 +5,178 @@ function App() {
   const [requirement, setRequirement] = useState('')
   const [screen, setScreen] = useState('create')
   const [result, setResult] = useState(null)
+
+  const [checkResults, setCheckResults] = useState({
+    age: true,
+    income: true
+  })
+
   const [conditions, setConditions] = useState({
     age: 21,
     income: 4000
   })
-
   if (screen === 'result') {
     return (
-      <div className="app-container">
-        <div className="card">
+      <div className={`result-page ${result ? 'qualified' : 'unqualified'}`}>
   
-          <h1>Verification Result</h1>
+        <div className="particle particle-one"></div>
+        <div className="particle particle-two"></div>
+        <div className="particle particle-three"></div>
+        <div className="particle particle-four"></div>
+        <div className="particle particle-five"></div>
+        <div className="particle particle-six"></div>
   
-          <div className="result-success">
-            <h2>
-              {result ? '✅ Qualified' : '❌ Not Qualified'}
-            </h2>
-            <p>
-              {result
-                ? 'The applicant meets the requested conditions.'
-                : 'The applicant does not meet the requested conditions.'
-              }
-            </p>
+        <nav className="top-nav">
+          <div className="brand">
+            <div className="brand-icon">V</div>
+            <span>VEILAI</span>
           </div>
   
-          <div className="privacy-box">
-            <p>Actual age: 🔒 Hidden</p>
-            <p>Actual income: 🔒 Hidden</p>
-            <p>No sensitive values were revealed.</p>
+          <div className="nav-status">
+            <span className="status-dot"></span>
+            Verification Complete
+          </div>
+        </nav>
+  
+        <main className="result-content">
+  
+          <div className="result-icon">
+            {result ? '✓' : '×'}
           </div>
   
-        </div>
+          <p className="result-eyebrow">
+            PRIVATE VERIFICATION COMPLETE
+          </p>
+  
+          <h1 className="result-title">
+            {result ? 'QUALIFIED' : 'NOT QUALIFIED'}
+          </h1>
+  
+          <p className="result-description">
+            {result
+              ? 'The applicant satisfies all requested conditions.'
+              : 'The applicant does not satisfy all requested conditions.'}
+          </p>
+  
+          <div className="result-card">
+  
+            <div className="result-card-heading">
+              <div>
+                <p className="eyebrow">VERIFICATION RESULTS</p>
+                <h2>Requested conditions</h2>
+              </div>
+  
+              <div className="proof-badge">
+                ZK Proof complete
+              </div>
+            </div>
+  
+            <div className="result-check-row">
+  
+              <div>
+                <span className="result-check-label">
+                  Age requirement
+                </span>
+  
+                <p>
+                  Age ≥ {conditions.age}
+                </p>
+              </div>
+  
+              <div
+                className={
+                  checkResults.age
+                    ? 'check-status passed'
+                    : 'check-status failed'
+                }
+              >
+                {checkResults.age ? '✓ PASSED' : '× FAILED'}
+              </div>
+  
+            </div>
+  
+            <div className="result-check-row">
+  
+              <div>
+                <span className="result-check-label">
+                  Monthly income requirement
+                </span>
+  
+                <p>
+                  Income ≥ ${conditions.income.toLocaleString()}
+                </p>
+              </div>
+  
+              <div
+                className={
+                  checkResults.income
+                    ? 'check-status passed'
+                    : 'check-status failed'
+                }
+              >
+                {checkResults.income ? '✓ PASSED' : '× FAILED'}
+              </div>
+  
+            </div>
+  
+            <div className="midnight-proof-row">
+  
+              <div className="midnight-proof-icon">
+                ✦
+              </div>
+  
+              <div className="midnight-proof-text">
+                <span>ZERO-KNOWLEDGE PROOF</span>
+                <strong>Verified privately with Midnight</strong>
+              </div>
+  
+              <div className="verified-badge">
+                ✓ VERIFIED
+              </div>
+  
+            </div>
+  
+          </div>
+  
+          <div className="privacy-impact">
+  
+            <div className="privacy-number">
+              0
+            </div>
+  
+            <div className="privacy-impact-text">
+              <strong>SENSITIVE VALUES REVEALED</strong>
+              <span>
+                The decision was made without exposing the applicant's private values.
+              </span>
+            </div>
+  
+            <div className="privacy-lock">
+              🔒
+            </div>
+  
+          </div>
+  
+          <button
+            className="new-verification-button"
+            onClick={() => {
+              setRequirement('')
+              setResult(null)
+  
+              setCheckResults({
+                age: true,
+                income: true
+              })
+  
+              setScreen('create')
+            }}
+          >
+            <span>Start New Verification</span>
+            <span>↻</span>
+          </button>
+  
+        </main>
+  
       </div>
     )
   }
@@ -46,10 +187,10 @@ function App() {
         <div className="particle particle-two"></div>
         <div className="particle particle-three"></div>
         <div className="particle particle-four"></div>
-<div className="particle particle-five"></div>
-<div className="particle particle-six"></div>
-<div className="particle particle-seven"></div>
-<div className="particle particle-eight"></div>
+        <div className="particle particle-five"></div>
+        <div className="particle particle-six"></div>
+        <div className="particle particle-seven"></div>
+        <div className="particle particle-eight"></div>
   
         <nav className="top-nav">
           <div className="brand">
@@ -148,6 +289,11 @@ function App() {
           <button
             className="primary-button verify-button"
             onClick={() => {
+              setCheckResults({
+                age: true,
+                income: true
+              })
+
               setResult(true)
               setScreen('result')
             }}
