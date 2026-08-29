@@ -16,9 +16,9 @@ An AI-powered zero-knowledge verification engine, powered by midnight that valid
     cd private-ai-verification
     npm install
    ```
-2. **Follow the link below and download Release Windows Linux 0.19.0**
-   https://docs.midnight.network/relnotes/compact
-   Move the file to the cloned repository
+2. **Follow the link below and download Release Windows Linux 0.19.0** <br>
+   https://docs.midnight.network/relnotes/compact <br>
+   Move the file to the cloned repository <br>
    Enter Linux and unzip:
    ```bash
    wsl
