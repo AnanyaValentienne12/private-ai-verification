@@ -162,16 +162,6 @@ function App() {
                 </p>
               </div>
   
-              <div
-                className={
-                  checkResults.age
-                    ? 'check-status passed'
-                    : 'check-status failed'
-                }
-              >
-                {checkResults.age ? '✓ PASSED' : '× FAILED'}
-              </div>
-  
             </div>
   
             <div className="result-check-row">
@@ -185,16 +175,6 @@ function App() {
                   Income {conditions.income.operator} $
                   {conditions.income.value.toLocaleString()}
                 </p>
-              </div>
-  
-              <div
-                className={
-                  checkResults.income
-                    ? 'check-status passed'
-                    : 'check-status failed'
-                }
-              >
-                {checkResults.income ? '✓ PASSED' : '× FAILED'}
               </div>
   
             </div>
@@ -371,14 +351,30 @@ function App() {
   
           <button
             className="primary-button verify-button"
-            onClick={() => {
-              setCheckResults({
-                age: true,
-                income: true
-              })
-
-              setResult(true)
-              setScreen('result')
+            onClick={async () => {
+              try {
+                const response = await fetch('http://localhost:3001/verify', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    minAge: conditions.age.value,
+                    minIncome: conditions.income.value,
+            
+                    // Mock private applicant credential for MVP
+                    age: 25,
+                    income: 50000
+                  })
+                })
+            
+                const data = await response.json()
+            
+                setResult(data.verified)
+                setScreen('result')
+              } catch (error) {
+                console.error('Verification failed:', error)
+              }
             }}
           >
             <span>Verify with Midnight</span>
