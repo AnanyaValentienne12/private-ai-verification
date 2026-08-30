@@ -31,6 +31,25 @@ An AI-powered zero-knowledge verification engine, powered by midnight that valid
    npm install @midnight-ntwrk/midnight-js-http-client-proof-provider
    npm install @midnight-ntwrk/compact-runtime
 
-4. **Compile Compact ZK Circuit**
+4. **Compile Compact ZK Circuit:**
+   ```bash
+   compact compile enligibilityChecker.compact managed/eligibility
+   npm run build
+   ```
+   **(If you can't compile):**<br>
+   Run these and check for your index.ts (might be index.cjs or index.js as well)
    ```bash
    compact compile eligibilityChecker.compact managed/eligibility
+   ls -l /home/{YOUR_USERNAME}/.local/bin/compact
+   /home/{YOUR_USERNAME}/.local/bin/compact compile enligibilityChecker.compact managed/eligibility
+   ls managed/eligibility
+   ```
+5. **Runs Typescript with Node.js:**
+    ```bash
+    npx ts-node mainAPI.ts
+    npm install -D tsx
+    ```
+6. **After running npm build, to run testRun:**
+    ```bash
+    npx tsx testRun.ts
+    ```
