@@ -368,8 +368,18 @@ curl --proto '=https' --tlsv1.2 -LsSf https://github.com/midnightntwrk/compact/r
 source ~/.bashrc
 compact update
 ```
+## 6. Replace package.json script (if there are version mismatch errors) and build again
+Replace index.cjs with index.js if needed (vice versa)
+```bash
+"scripts": {
+    "build": "compact compile enligibilityChecker.compact managed/eligibility"
+  }
+```
+```bash
+compact compile enligibilityChecker.compact managed/eligibility
+```
 
-## 6. Run the Midnight Test
+## 7. Run the Midnight Test
 
 After running the build:
 
