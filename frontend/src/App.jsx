@@ -12,9 +12,88 @@ function App() {
   })
 
   const [conditions, setConditions] = useState({
-    age: 21,
-    income: 4000
-  })
+    age:{
+      operator: ">=",
+      value: 21
+  },
+  income: {
+    operator: ">=",
+    value: 4000
+  }
+})
+  const [policy, setPolicy] = useState(null)
+  const [isParsing, setIsParsing] = useState(false)
+  const [parseError, setParseError] = useState('')
+
+  async function handleCreateVerification() {
+    if (!requirement.trim()) {
+      setParseError('Please enter a verification requirement.')
+      return
+    }
+  
+    setIsParsing(true)
+    setParseError('')
+  
+    try {
+      const response = await fetch(
+        'http://localhost:3000/api/policy/parse',
+        {
+          method: 'POST',
+  
+          headers: {
+            'Content-Type': 'application/json'
+          },
+  
+          body: JSON.stringify({
+            requirement: requirement
+          })
+        }
+      )
+  
+      const data = await response.json()
+  
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data?.error?.message || 'Could not interpret the requirement.'
+        )
+      }
+  
+      setPolicy(data.policy)
+  
+      const ageRule = data.policy.rules.find(
+        (rule) => rule.field === 'age'
+      )
+  
+      const incomeRule = data.policy.rules.find(
+        (rule) => rule.field === 'income'
+      )
+  
+      setConditions({
+        age: {
+          operator: ageRule?.operator ?? '>=',
+          value: ageRule?.value ?? 21
+        },
+      
+        income: {
+          operator: incomeRule?.operator ?? '>=',
+          value: incomeRule?.value ?? 4000
+        }
+      })
+  
+      setScreen('verify')
+    } catch (error) {
+      console.error(error)
+  
+      setParseError(
+        error.message || 'Something went wrong while contacting the backend.'
+      )
+    } finally {
+      setIsParsing(false)
+    }
+  }
+
+
+
   if (screen === 'result') {
     return (
       <div className={`result-page ${result ? 'qualified' : 'unqualified'}`}>
@@ -79,7 +158,7 @@ function App() {
                 </span>
   
                 <p>
-                  Age ≥ {conditions.age}
+                  Age {conditions.age.operator} {conditions.age.value}
                 </p>
               </div>
   
@@ -103,7 +182,8 @@ function App() {
                 </span>
   
                 <p>
-                  Income ≥ ${conditions.income.toLocaleString()}
+                  Income {conditions.income.operator} $
+                  {conditions.income.value.toLocaleString()}
                 </p>
               </div>
   
@@ -235,13 +315,16 @@ function App() {
   
               <div className="policy-row">
                 <span>Age</span>
-                <strong>≥ {conditions.age}</strong>
+                <strong>
+                  {conditions.age.operator} {conditions.age.value}
+                </strong>
               </div>
   
               <div className="policy-row">
                 <span>Monthly income</span>
                 <strong>
-                  ≥ ${conditions.income.toLocaleString()}
+                  {conditions.income.operator} $
+                  {conditions.income.value.toLocaleString()}
                 </strong>
               </div>
   
@@ -365,11 +448,32 @@ function App() {
   
           <button
             className="primary-button"
-            onClick={() => setScreen('verify')}
+            onClick={handleCreateVerification}
+
+
+            disabled={isParsing}
           >
-            <span>Create Verification</span>
-            <span>→</span>
+            <span>
+              {isParsing 
+              ? 'Interpreting requirement...'
+              : 'Create Verification'}
+            </span>
+            <span>
+              {isParsing ? '✦' : '→'}
+
+
+
+            </span>
           </button>
+          {parseError && (
+            <div className="parse-error">
+              {parseError}
+            </div>
+          )}
+
+
+
+
   
           <div className="privacy-note">
             <span>◉</span>
