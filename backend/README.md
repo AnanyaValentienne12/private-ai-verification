@@ -84,7 +84,12 @@ The backend converts that natural-language requirement into a validated structur
         "unit": "USD_MONTHLY"
       }
     ]
-  }
+  },
+  "publicCriteria": {
+    "minAge": 21,
+    "minIncome": 4000
+  },
+  "midnightCompatible": true
 }
 ```
 
@@ -93,4 +98,4 @@ The backend converts that natural-language requirement into a validated structur
 - Live parsing requires a real `AI_API_KEY`.
 - This MVP supports only `age` and `income`.
 - Applicant private data is not accepted or stored by this backend.
-- Midnight/Compact verification is not implemented yet.
+- This backend does not run Compact/ZK itself. Successful parses that Compact can prove also return `publicCriteria: { minAge, minIncome }` for `executeVerification` in `private-ai-verification/mainAPI.ts`. Applicant age/income stay in the local witness, not in this API.

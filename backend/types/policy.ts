@@ -39,9 +39,19 @@ export interface EligibilityPolicy {
 }
 
 /**
- * Minimal handoff shape. A future adapter should map `policy` into Compact
- * predicates without adding backend-side evaluation or extra fields.
+ * Public circuit arguments for the existing Compact `verifyEligibility`
+ * circuit. These are thresholds only — never applicant age or income.
+ */
+export interface MidnightPublicCriteria {
+  minAge: number;
+  minIncome: number;
+}
+
+/**
+ * Handoff from the AI policy layer to `executeVerification` in
+ * `private-ai-verification/mainAPI.ts`. Applicant values stay in the witness.
  */
 export interface MidnightPolicyBinding {
   policy: EligibilityPolicy;
+  publicCriteria: MidnightPublicCriteria;
 }
