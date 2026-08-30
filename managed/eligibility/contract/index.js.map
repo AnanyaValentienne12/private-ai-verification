@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "file": "index.js",
+  "sourceRoot": "../../../",
+  "sources": ["enligibilityChecker.compact"],
+  "names": [],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EAAA;;;;;;;;;;;;;;;;MAKA,AAAA,iBAYC;;;;;cAXC,QAAiB;cACjB,QAAgB;cAChB,WAAmB;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;yCAFnB,QAAiB,+BACjB,QAAgB,+BAChB,WAAmB;;;;;;;;;yDAFnB,QAAiB;yDACjB,QAAgB;yDAChB,WAAmB;;;;OASpB;;;;;;GAAC;EAjBF;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;GAiBE;EAfF,AAAA,kBAAoC;;0DAApC,eAAoC;;;;;;;;;;;;;;GAAA;EACpC,AAAA,qBAAuC;;0DAAvC,kBAAuC;;;;;;;;;;;;;;GAAA;EAEvC,AAAA,0BAYC;;6BAXC,QAAiB;6BACjB,QAAgB;6BAChB,WAAmB;;UAGb,KAAuB;UACvB,QAA6B;4BAG5B,KAAG,IAAI,QAAM;4BACb,QAAM,IAAI,WAAS;;;GAC3B;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"
+}
