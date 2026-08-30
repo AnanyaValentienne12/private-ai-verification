@@ -32,6 +32,28 @@ describe("POST /api/policy/parse", () => {
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.policy.rules).toHaveLength(2);
+    expect(response.body.publicCriteria).toEqual({ minAge: 21, minIncome: 4000 });
+    expect(response.body.midnightCompatible).toBe(true);
+  });
+
+  it("returns midnightCompatible false for OR policies Compact cannot prove", async () => {
+    mockedParse.mockResolvedValue({
+      version: 1,
+      logic: "OR",
+      rules: [
+        { field: "age", operator: ">=", value: 21 },
+        { field: "income", operator: ">=", value: 4000, unit: "USD_MONTHLY" },
+      ],
+    });
+
+    const response = await request(createApp())
+      .post("/api/policy/parse")
+      .send({ requirement: "Applicant must be 21+ or earn at least $4,000/month." });
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+    expect(response.body.publicCriteria).toBeNull();
+    expect(response.body.midnightCompatible).toBe(false);
   });
 
   it("rejects an empty requirement", async () => {

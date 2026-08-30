@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { parseRequirement } from "../../ai/policy-parser";
+import { tryToPublicCriteria } from "../../midnight/policy-to-criteria";
 import { parsePolicyRequestSchema } from "../../schemas/policy.schema";
 import { AppError } from "../../utils/errors";
 import { log } from "../../utils/logger";
@@ -24,16 +25,20 @@ export async function parsePolicy(
     });
 
     const policy = validatePolicySemantics(await parseRequirement(requirement));
+    const publicCriteria = tryToPublicCriteria(policy);
 
     log("info", "policy.parse.success", {
       requestId: req.requestId,
       logic: policy.logic,
       ruleCount: policy.rules.length,
+      midnightCompatible: publicCriteria !== null,
     });
 
     res.status(200).json({
       success: true,
       policy,
+      publicCriteria,
+      midnightCompatible: publicCriteria !== null,
     });
   } catch (error) {
     next(error);
