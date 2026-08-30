@@ -44,9 +44,9 @@ export async function executeVerification(
       BigInt(publicCriteria.minIncome)
     );
 
-    return { verified: true, tx: result }; //returns true/false
+    return {verified: true}; //returns true/false
   } catch (error: any) {
-    console.error("Verification failed:", error);
-    return { verified: false, error: error.message ?? "Applicant did not meet eligibility criteria." };
+    //console.error("Verification failed:", error);
+    return {verified: false};
   }
 }
