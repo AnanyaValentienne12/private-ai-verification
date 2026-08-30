@@ -1,5 +1,5 @@
 import { WitnessContext } from '@midnight-ntwrk/compact-runtime';
-import { Ledger } from './managed/eligibility/contract/index.cjs';
+import { Ledger } from './managed/eligibility/contract/index.js';
 
 export interface UserPrivateData {
   age: bigint;
