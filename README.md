@@ -44,10 +44,14 @@ An AI-powered zero-knowledge verification engine, powered by midnight that valid
    /home/{YOUR_USERNAME}/.local/bin/compact compile enligibilityChecker.compact managed/eligibility
    ls managed/eligibility
    ```
-5. **Runs Typescript with Node.js:**
+5. **Runs Typescript with Node.js and finish set-up:**
     ```bash
     npx ts-node mainAPI.ts
     npm install -D tsx
+
+    curl --proto '=https' --tlsv1.2 -LsSf https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
+    source ~/.bashrc
+    compact update
     ```
 6. **After running npm build, to run testRun:**
     ```bash
